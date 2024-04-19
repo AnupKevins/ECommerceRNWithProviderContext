@@ -4,6 +4,8 @@ import {NavigationContainer} from '@react-navigation/native';
 import ProductScreen from './src/screens/productScreen';
 import {Provider} from './src/context/productContext';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import LikeScreen from './src/screens/LikeScreen';
+import {ProductProvider} from './src/context/tabProductContext';
 
 const Stack = createNativeStackNavigator();
 
@@ -13,13 +15,10 @@ const App = () => {
   return (
     <NavigationContainer>
       <Provider>
-        <Stack.Navigator initialRouteName="Product">
-          <Stack.Screen
-            name="Product"
-            component={ProductScreen}
-            options={{title: 'Products'}}
-          />
-        </Stack.Navigator>
+        <Tab.Navigator>
+          <Tab.Screen name="Home" component={ProductScreen} />
+          <Tab.Screen name="Likes" component={LikeScreen} />
+        </Tab.Navigator>
       </Provider>
     </NavigationContainer>
   );
