@@ -11,25 +11,40 @@ import {
 } from 'react-native';
 
 import {Context} from '../context/productContext';
-import {ProductContext} from '../context/tabProductContext';
+import {ProductContext} from '../context/productContext';
 
 const screenWidth = Dimensions.get('window').width;
 const cardWidth = (screenWidth - 30) / 2;
 
 const LikeScreen = ({navigation}) => {
-  const {state, addToFavourites} = useContext(Context);
+  const {wishListedProducts} = useContext(ProductContext);
   //const {selectedItems} = useContext(ProductContext);
 
   //   const likeProducts = state.find(
   //     likeProduct => likeProduct.id === navigation.getParam('id'),
   //   );
-  console.log(state);
+  console.log('hello');
+  console.log('....27' + JSON.stringify(wishListedProducts));
   return (
     <SafeAreaView>
       <View>
-        <View>
-          <Text>"hello"</Text>
-        </View>
+        {wishListedProducts && (
+          <FlatList
+            numColumns={2}
+            data={wishListedProducts}
+            keyExtractor={products => products.id}
+            renderItem={({item}) => {
+              return (
+                <View style={[styles.card, {width: cardWidth}]}>
+                  <Image source={{uri: item.image}} style={styles.image} />
+                  <Text numberOfLines={1} style={styles.title}>
+                    {item.title}
+                  </Text>
+                </View>
+              );
+            }}
+          />
+        )}
       </View>
     </SafeAreaView>
   );

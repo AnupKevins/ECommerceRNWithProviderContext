@@ -5,7 +5,7 @@ import ProductScreen from './src/screens/productScreen';
 import {Provider} from './src/context/productContext';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import LikeScreen from './src/screens/LikeScreen';
-import {ProductProvider} from './src/context/tabProductContext';
+import {ProductProvider} from './src/context/productContext';
 
 const Stack = createNativeStackNavigator();
 
@@ -13,14 +13,14 @@ const Tab = createBottomTabNavigator();
 
 const App = () => {
   return (
-    <NavigationContainer>
-      <Provider>
+    <ProductProvider>
+      <NavigationContainer>
         <Tab.Navigator>
           <Tab.Screen name="Home" component={ProductScreen} />
           <Tab.Screen name="Likes" component={LikeScreen} />
         </Tab.Navigator>
-      </Provider>
-    </NavigationContainer>
+      </NavigationContainer>
+    </ProductProvider>
   );
 };
 

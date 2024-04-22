@@ -10,58 +10,65 @@ import {
   Dimensions,
 } from 'react-native';
 
-import {Context} from '../context/productContext';
+import {ProductContext} from '../context/productContext';
 
 const screenWidth = Dimensions.get('window').width;
 const cardWidth = (screenWidth - 30) / 2;
 
 const ProductScreen = ({navigation}) => {
-  const {state, getProducts} = useContext(Context);
+  const productContext = useContext(ProductContext);
 
   const [selectedItems, setSelectedItems] = useState({}); // State variable to track selected items
 
-  const handlePress = itemId => {
-    // Handle button press event here
+  const handlePress = item => {
+    console.log('......24' + productContext.wishListedProducts);
+    if (productContext.wishListedProducts.includes(item)) {
+      productContext.removeWishListedItem(item);
+    } else {
+      productContext.addWishListedItem(item);
+    }
+
     setSelectedItems(prevState => ({
       ...prevState,
-      [itemId]: !prevState[itemId], // Toggle selection state for the item
+      [item.id]: !prevState[item.id], // Toggle selection state for the item
     }));
   };
 
-  useEffect(() => {
-    getProducts();
-  }, [getProducts]);
-
+  // useEffect(() => {
+  //   getProducts();
+  // }, [getProducts]);
   return (
     <SafeAreaView>
       <View>
-        <FlatList
-          numColumns={2}
-          data={state}
-          keyExtractor={products => products.id}
-          renderItem={({item}) => {
-            return (
-              <View style={[styles.card, {width: cardWidth}]}>
-                <TouchableOpacity
-                  onPress={() => handlePress(item.id)}
-                  style={styles.button}>
-                  <Image
-                    source={
-                      selectedItems[item.id]
-                        ? require('../assets/heartRed.png')
-                        : require('../assets/heartGrey.png')
-                    }
-                    style={styles.heartIcon}
-                  />
-                </TouchableOpacity>
-                <Image source={{uri: item.image}} style={styles.image} />
-                <Text numberOfLines={1} style={styles.title}>
-                  {item.title}
-                </Text>
-              </View>
-            );
-          }}
-        />
+        {productContext.productData && (
+          <FlatList
+            numColumns={2}
+            data={productContext.productData}
+            keyExtractor={products => products.id}
+            renderItem={({item}) => {
+              return (
+                <View style={[styles.card, {width: cardWidth}]}>
+                  <TouchableOpacity
+                    onPress={() => handlePress(item)}
+                    style={styles.button}>
+                    <Image
+                      source={
+                        selectedItems[item.id]
+                          ? require('../assets/heartRed.png')
+                          : require('../assets/heartGrey.png')
+                      }
+                      style={styles.heartIcon}
+                    />
+                  </TouchableOpacity>
+                  <Image source={{uri: item.image}} style={styles.image} />
+                  <Text numberOfLines={1} style={styles.title}>
+                    {item.title}
+                  </Text>
+                </View>
+              );
+            }}
+          />
+        )}
       </View>
     </SafeAreaView>
   );

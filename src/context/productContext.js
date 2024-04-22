@@ -1,25 +1,52 @@
-import jsonServer from '../api/jsonServer';
-import createDataContext from './createDataContext';
+// ProductContext.js
+import React, {createContext, useContext, useEffect, useState} from 'react';
 
-const productReducer = (state, action) => {
-  switch (action.type) {
-    case 'get_products':
-      return action.payload;
-    default:
-      return state;
-  }
-};
+export const ProductContext = createContext();
 
-const getProducts = dispatch => {
-  return async () => {
-    const response = await jsonServer.get('/products');
+export const useProductContext = () => useContext(ProductContext);
 
-    dispatch({type: 'get_products', payload: response.data});
+export const ProductProvider = ({children}) => {
+  const [productData, setProductData] = useState(null);
+
+  const [wishListedProducts, setWishListedProducts] = useState([]);
+
+  const addWishListedItem = product => {
+    console.log(product);
+    setWishListedProducts(prevWishListedItems => [
+      ...prevWishListedItems,
+      product,
+    ]);
   };
-};
 
-export const {Context, Provider} = createDataContext(
-  productReducer,
-  {getProducts},
-  [],
-);
+  const removeWishListedItem = product => {
+    setWishListedProducts(prevWishListedItems =>
+      prevWishListedItems.filter(item => item.id !== product.id),
+    );
+  };
+
+  useEffect(() => {
+    const fetchProductData = async () => {
+      try {
+        const response = await fetch('https://fakestoreapi.com/products');
+        const data = await response.json();
+        setProductData(data);
+      } catch (error) {
+        console.error('Error fetching product data:', error);
+      }
+    };
+
+    fetchProductData();
+  }, []);
+
+  return (
+    <ProductContext.Provider
+      value={{
+        productData: productData,
+        wishListedProducts: wishListedProducts,
+        addWishListedItem: addWishListedItem,
+        removeWishListedItem: removeWishListedItem,
+      }}>
+      {children}
+    </ProductContext.Provider>
+  );
+};
