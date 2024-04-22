@@ -17,26 +17,36 @@ const screenWidth = Dimensions.get('window').width;
 const cardWidth = (screenWidth - 30) / 2;
 
 const LikeScreen = ({navigation}) => {
-  const {wishListedProducts} = useContext(ProductContext);
-  //const {selectedItems} = useContext(ProductContext);
-
-  //   const likeProducts = state.find(
-  //     likeProduct => likeProduct.id === navigation.getParam('id'),
-  //   );
-  console.log('hello');
-  console.log('....27' + JSON.stringify(wishListedProducts));
+  const wishListedContext = useContext(ProductContext);
+  console.log('....27' + JSON.stringify(wishListedContext.wishListedProducts));
   return (
     <SafeAreaView>
       <View>
-        {wishListedProducts && (
+        {wishListedContext.wishListedProducts && (
           <FlatList
             numColumns={2}
-            data={wishListedProducts}
+            data={wishListedContext.wishListedProducts}
             keyExtractor={products => products.id}
-            renderItem={({item}) => {
+            renderItem={({item, index}) => {
               return (
                 <View style={[styles.card, {width: cardWidth}]}>
-                  <Image source={{uri: item.image}} style={styles.image} />
+                  <View style={styles.percentageView}>
+                    <View style={styles.textContainer}>
+                      <Text style={styles.percentageText}>30%</Text>
+                    </View>
+                  </View>
+                  <View style={styles.imageContainer}>
+                    <Image
+                      source={
+                        wishListedContext.arrBGImages[
+                          index % wishListedContext.arrBGImages.length
+                        ]
+                      }
+                      style={styles.imageBG}
+                    />
+                    <Image source={{uri: item.image}} style={styles.image} />
+                  </View>
+
                   <Text numberOfLines={1} style={styles.title}>
                     {item.title}
                   </Text>
@@ -64,31 +74,59 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    height: 260,
-  },
-  title: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    alignContent: 'center',
   },
   description: {
     fontSize: 16,
   },
-  image: {
+  imageContainer: {
+    flex: 1, // Add flex property
+    justifyContent: 'center', // Align children vertically center
+    alignItems: 'center', // Align children horizontally center
+    height: 150,
+    marginBottom: 8,
+  },
+  imageBG: {
     width: '100%',
+    height: '100%', // Adjust the height as needed
+    resizeMode: 'contain', // Change resizeMode to stretch
+    position: 'absolute', // Set position to absolute
+  },
+  image: {
+    width: '50%',
     height: '50%', // Adjust the height as needed
     borderRadius: 10, // Ensure the image has rounded corners
     marginBottom: 10,
+    zIndex: 1,
   },
-  button: {
-    alignItems: 'flex-end',
+  percentageView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+    marginTop: 8,
+  },
+  textContainer: {
+    backgroundColor: '#A0DBF5', // Background color for the percentage text container
+    padding: 5,
+    borderRadius: 5,
+  },
+  percentageText: {
+    color: 'white',
+    fontSize: 12,
+  },
+  heartButton: {
     marginBottom: 8,
   },
   heartIcon: {
     width: 20,
     height: 20,
     resizeMode: 'contain',
+  },
+  title: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    alignContent: 'center',
   },
 });
 
