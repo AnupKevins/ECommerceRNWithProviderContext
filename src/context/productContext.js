@@ -10,6 +10,13 @@ export const ProductProvider = ({children}) => {
 
   const [wishListedProducts, setWishListedProducts] = useState([]);
 
+  const arrBGImages = [
+    require('../assets/circleYellow.png'),
+    require('../assets/circlePink.png'),
+    require('../assets/circleGreen.png'),
+    require('../assets/circleBlue.png'),
+  ];
+
   const addWishListedItem = product => {
     console.log(product);
     setWishListedProducts(prevWishListedItems => [
@@ -45,6 +52,7 @@ export const ProductProvider = ({children}) => {
         wishListedProducts: wishListedProducts,
         addWishListedItem: addWishListedItem,
         removeWishListedItem: removeWishListedItem,
+        arrBGImages: arrBGImages,
       }}>
       {children}
     </ProductContext.Provider>
