@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 
 import {ProductContext} from '../context/productContext';
-import CircleImage from '../components/circularProduct';
+import Rating from '../components/ratingItem';
 
 const screenWidth = Dimensions.get('window').width;
 const cardWidth = (screenWidth - 30) / 2;
@@ -84,6 +84,17 @@ const ProductScreen = ({navigation}) => {
                   <Text numberOfLines={1} style={styles.title}>
                     {item.title}
                   </Text>
+                  <Text numberOfLines={1} style={styles.price}>
+                    $ {item.price}
+                  </Text>
+                  <View style={styles.ratingContainer}>
+                    {item.rating.rate !== undefined &&
+                    item.rating.rate !== null ? (
+                      <Rating value={item.rating.rate} />
+                    ) : (
+                      <Text>{item.rating.rate}/5</Text>
+                    )}
+                  </View>
                 </View>
               );
             }}
@@ -108,9 +119,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-  },
-  description: {
-    fontSize: 16,
   },
   imageContainer: {
     flex: 1, // Add flex property
@@ -145,8 +153,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   percentageText: {
-    color: 'white',
-    fontSize: 12,
+    color: '#494F86',
+    fontSize: 10,
+    fontWeight: 'bold',
   },
   heartButton: {
     marginBottom: 8,
@@ -160,7 +169,19 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: 'bold',
     marginBottom: 8,
-    alignContent: 'center',
+    textAlign: 'center',
+    color: '#686D9B',
+  },
+  price: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    textAlign: 'center',
+    color: '#4952B0',
+  },
+  ratingContainer: {
+    alignItems: 'center',
+    marginTop: 8,
   },
 });
 
