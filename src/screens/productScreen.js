@@ -48,54 +48,59 @@ const ProductScreen = ({navigation}) => {
             keyExtractor={products => products.id}
             renderItem={({item, index}) => {
               return (
-                <View style={[styles.card, {width: cardWidth}]}>
-                  <View style={styles.percentageView}>
-                    <View style={styles.textContainer}>
-                      <Text style={styles.percentageText}>30%</Text>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate('Details', {product: item})
+                  }>
+                  <View style={[styles.card, {width: cardWidth}]}>
+                    <View style={styles.percentageView}>
+                      <View style={styles.textContainer}>
+                        <Text style={styles.percentageText}>30%</Text>
+                      </View>
+                      <TouchableOpacity
+                        onPress={() => handlePress(item)}
+                        style={styles.heartButton}>
+                        <Image
+                          source={
+                            selectedItems[item.id]
+                              ? require('../assets/heartRed.png')
+                              : require('../assets/heartGrey.png')
+                          }
+                          style={styles.heartIcon}
+                        />
+                      </TouchableOpacity>
                     </View>
-                    <TouchableOpacity
-                      onPress={() => handlePress(item)}
-                      style={styles.heartButton}>
+                    <View style={styles.imageContainer}>
                       <Image
                         source={
-                          selectedItems[item.id]
-                            ? require('../assets/heartRed.png')
-                            : require('../assets/heartGrey.png')
+                          productContext.arrBGImages[
+                            index % productContext.arrBGImages.length
+                          ]
                         }
-                        style={styles.heartIcon}
+                        style={styles.imageBG}
                       />
-                    </TouchableOpacity>
-                  </View>
-                  <View style={styles.imageContainer}>
-                    <Image
-                      source={
-                        productContext.arrBGImages[
-                          index % productContext.arrBGImages.length
-                        ]
-                      }
-                      style={styles.imageBG}
-                    />
-                    <Image source={{uri: item.image}} style={styles.image} />
-                    {/* {item.image !== null ? (
+                      <Image source={{uri: item.image}} style={styles.image} />
+                      {/* {item.image !== null ? (
                       <CircleImage imagePath={item.image} />
                     ) : null} */}
-                  </View>
+                    </View>
 
-                  <Text numberOfLines={1} style={styles.title}>
-                    {item.title}
-                  </Text>
-                  <Text numberOfLines={1} style={styles.price}>
-                    $ {item.price}
-                  </Text>
-                  <View style={styles.ratingContainer}>
-                    {item.rating.rate !== undefined &&
-                    item.rating.rate !== null ? (
-                      <Rating value={item.rating.rate} />
-                    ) : (
-                      <Text>{item.rating.rate}/5</Text>
-                    )}
+                    <Text numberOfLines={1} style={styles.title}>
+                      {item.title}
+                    </Text>
+                    <Text numberOfLines={1} style={styles.price}>
+                      $ {item.price}
+                    </Text>
+                    <View style={styles.ratingContainer}>
+                      {item.rating.rate !== undefined &&
+                      item.rating.rate !== null ? (
+                        <Rating value={item.rating.rate} />
+                      ) : (
+                        <Text>{item.rating.rate}/5</Text>
+                      )}
+                    </View>
                   </View>
-                </View>
+                </TouchableOpacity>
               );
             }}
           />
