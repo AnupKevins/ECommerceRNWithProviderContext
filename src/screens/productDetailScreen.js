@@ -20,8 +20,10 @@ const ProductDetailScreen = ({route}) => {
   console.log(product);
   return (
     <SafeAreaView>
-      <View style={styles.circleContainer}>
-        {/* <CircleComponent /> */}
+      <View style={styles.container}>
+        <View style={styles.textContainer}>
+          <Text style={styles.percentageText}>30%</Text>
+        </View>
         <View style={styles.imageContainer}>
           <CircleComponent style={styles.imageBG} />
           <Image source={{uri: product.image}} style={styles.image} />
@@ -32,10 +34,22 @@ const ProductDetailScreen = ({route}) => {
 };
 
 const styles = StyleSheet.create({
-  circleContainer: {
-    backgroundColor: 'transparent',
+  container: {
+    backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  textContainer: {
+    backgroundColor: '#A0DBF5', // Background color for the percentage text container
+    padding: 5,
+    borderRadius: 5,
+    marginBottom: -10,
+    marginTop: 30,
+  },
+  percentageText: {
+    color: '#494F86',
+    fontSize: 10,
+    fontWeight: 'bold',
   },
   imageContainer: {
     position: 'relative', // Add position relative

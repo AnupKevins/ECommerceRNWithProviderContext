@@ -1,6 +1,9 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {NavigationContainer} from '@react-navigation/native';
+import {
+  NavigationContainer,
+  getFocusedRouteNameFromRoute,
+} from '@react-navigation/native';
 import ProductScreen from './src/screens/productScreen';
 import ProductDetailScreen from './src/screens/productDetailScreen';
 import {Provider} from './src/context/productContext';
@@ -8,16 +11,38 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import LikeScreen from './src/screens/LikeScreen';
 import {ProductProvider} from './src/context/productContext';
 
-const HomeStack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator();
 
 const Tab = createBottomTabNavigator();
 
-function HomeStackScreen() {
+function getHeaderTitle(route) {
+  // If the focused route is not found, we need to assume it's the initial screen
+  // This can happen during if there hasn't been any navigation inside the screen
+  // In our case, it's "Feed" as that's the first screen inside the navigator
+  const routeName = getFocusedRouteNameFromRoute(route) ?? 'HomeTab';
+
+  switch (routeName) {
+    case 'HomeTab':
+      return 'Products';
+    case 'Likes':
+      return 'WishList';
+  }
+}
+
+function HomeTabs() {
   return (
-    <HomeStack.Navigator>
-      <HomeStack.Screen name="Home" component={ProductScreen} />
-      <HomeStack.Screen name="Details" component={ProductDetailScreen} />
-    </HomeStack.Navigator>
+    <Tab.Navigator screenOptions={{headerShown: false}}>
+      <Tab.Screen
+        name="HomeTab"
+        component={ProductScreen}
+        options={{tabBarLabel: 'Home'}}
+      />
+      <Tab.Screen
+        name="Likes"
+        component={LikeScreen}
+        options={{tabBarLabel: 'Likes'}}
+      />
+    </Tab.Navigator>
   );
 }
 
@@ -25,10 +50,20 @@ const App = () => {
   return (
     <ProductProvider>
       <NavigationContainer>
-        <Tab.Navigator screenOptions={{headerShown: false}}>
-          <Tab.Screen name="Home" component={HomeStackScreen} />
-          <Tab.Screen name="Likes" component={LikeScreen} />
-        </Tab.Navigator>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="HomeStack"
+            component={HomeTabs}
+            options={({route}) => ({
+              headerTitle: getHeaderTitle(route),
+            })}
+          />
+          <Stack.Screen
+            name="Details"
+            component={ProductDetailScreen}
+            options={{headerTitle: 'Products Details'}}
+          />
+        </Stack.Navigator>
       </NavigationContainer>
     </ProductProvider>
   );
