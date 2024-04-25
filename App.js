@@ -4,21 +4,20 @@ import {
   NavigationContainer,
   getFocusedRouteNameFromRoute,
 } from '@react-navigation/native';
-import ProductScreen from './src/screens/productScreen';
-import ProductDetailScreen from './src/screens/productDetailScreen';
-import {Provider} from './src/context/productContext';
+import {createDrawerNavigator} from '@react-navigation/drawer';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {Provider} from './src/context/productContext';
+import ProductScreen from './src/screens/productScreen';
+import ProfileScreen from './src/screens/profileScreen';
+import ProductDetailScreen from './src/screens/productDetailScreen';
 import LikeScreen from './src/screens/LikeScreen';
 import {ProductProvider} from './src/context/productContext';
 
 const Stack = createNativeStackNavigator();
-
+const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
 
 function getHeaderTitle(route) {
-  // If the focused route is not found, we need to assume it's the initial screen
-  // This can happen during if there hasn't been any navigation inside the screen
-  // In our case, it's "Feed" as that's the first screen inside the navigator
   const routeName = getFocusedRouteNameFromRoute(route) ?? 'HomeTab';
 
   switch (routeName) {
@@ -29,22 +28,37 @@ function getHeaderTitle(route) {
   }
 }
 
-function HomeTabs() {
+const HomeTabs = () => {
   return (
-    <Tab.Navigator screenOptions={{headerShown: false}}>
+    <Tab.Navigator>
       <Tab.Screen
         name="HomeTab"
         component={ProductScreen}
-        options={{tabBarLabel: 'Home'}}
+        options={{tabBarLabel: 'Home', headerShown: false}}
       />
       <Tab.Screen
         name="Likes"
         component={LikeScreen}
-        options={{tabBarLabel: 'Likes'}}
+        options={{tabBarLabel: 'Likes', headerShown: false}}
       />
     </Tab.Navigator>
   );
-}
+};
+
+const DrawerNavigator = () => {
+  return (
+    <Drawer.Navigator initialRouteName="HomeDrawer">
+      <Drawer.Screen
+        name="HomeDrawer"
+        component={HomeTabs}
+        options={({route}) => ({
+          title: getHeaderTitle(route),
+        })}
+      />
+      <Drawer.Screen name="Profile" component={ProfileScreen} />
+    </Drawer.Navigator>
+  );
+};
 
 const App = () => {
   return (
@@ -53,15 +67,16 @@ const App = () => {
         <Stack.Navigator>
           <Stack.Screen
             name="HomeStack"
-            component={HomeTabs}
-            options={({route}) => ({
-              headerTitle: getHeaderTitle(route),
-            })}
+            component={DrawerNavigator}
+            options={{headerShown: false}}
           />
           <Stack.Screen
             name="Details"
             component={ProductDetailScreen}
-            options={{headerTitle: 'Products Details'}}
+            options={{
+              headerTitle: 'Products Details',
+              headerBackTitle: 'Products',
+            }}
           />
         </Stack.Navigator>
       </NavigationContainer>
