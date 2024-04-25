@@ -9,9 +9,11 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Provider} from './src/context/productContext';
 import ProductScreen from './src/screens/productScreen';
 import ProfileScreen from './src/screens/profileScreen';
+import CartScreen from './src/screens/CartScreen';
 import ProductDetailScreen from './src/screens/productDetailScreen';
 import LikeScreen from './src/screens/LikeScreen';
 import {ProductProvider} from './src/context/productContext';
+import {Image} from 'react-native';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -25,21 +27,52 @@ function getHeaderTitle(route) {
       return 'Products';
     case 'Likes':
       return 'WishList';
+    case 'Carts':
+      return 'My Carts';
   }
 }
 
 const HomeTabs = () => {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+      screenOptions={({route}) => ({
+        tabBarIcon: ({focused, color, size}) => {
+          let iconName;
+
+          if (route.name === 'HomeTab') {
+            iconName = focused
+              ? require('./src/assets/home_active.png')
+              : require('./src/assets/home_inactive.png');
+          } else if (route.name === 'Likes') {
+            iconName = focused
+              ? require('./src/assets/like_active.png')
+              : require('./src/assets/like_inactive.png');
+          } else if (route.name === 'Carts') {
+            iconName = focused
+              ? require('./src/assets/cart_active.png')
+              : require('./src/assets/cart_inactive.png');
+          }
+
+          return (
+            <Image source={iconName} style={{width: size, height: size}} />
+          );
+        },
+        tabBarLabel: '',
+      })}>
       <Tab.Screen
         name="HomeTab"
         component={ProductScreen}
-        options={{tabBarLabel: 'Home', headerShown: false}}
+        options={{headerShown: false}}
       />
       <Tab.Screen
         name="Likes"
         component={LikeScreen}
-        options={{tabBarLabel: 'Likes', headerShown: false}}
+        options={{headerShown: false}}
+      />
+      <Tab.Screen
+        name="Carts"
+        component={CartScreen}
+        options={{headerShown: false}}
       />
     </Tab.Navigator>
   );

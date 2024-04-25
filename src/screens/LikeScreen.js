@@ -23,7 +23,7 @@ const LikeScreen = ({navigation}) => {
   return (
     <SafeAreaView>
       <View>
-        {wishListedContext.wishListedProducts && (
+        {wishListedContext.wishListedProducts.length > 0 ? (
           <FlatList
             numColumns={2}
             data={wishListedContext.wishListedProducts}
@@ -66,6 +66,8 @@ const LikeScreen = ({navigation}) => {
               );
             }}
           />
+        ) : (
+          <Text style={styles.centeredText}>No products found.</Text>
         )}
       </View>
     </SafeAreaView>
@@ -149,6 +151,11 @@ const styles = StyleSheet.create({
   ratingContainer: {
     alignItems: 'center',
     marginTop: 8,
+  },
+  centeredText: {
+    marginTop: 50,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 
