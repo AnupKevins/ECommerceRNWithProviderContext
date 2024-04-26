@@ -64,17 +64,19 @@ const CartScreen = () => {
             {item.title}
           </Text>
           <Text numberOfLines={1} style={styles.description}>
-            {item.description}
+            {item.price}
           </Text>
         </View>
       </View>
       <View style={styles.counterContainer}>
         <TouchableOpacity
+          style={styles.counterMinusCard}
           onPress={() => updateItemCount(item.id, item.count - 1)}>
           <Text style={styles.counterButton}>-</Text>
         </TouchableOpacity>
         <Text style={styles.counterValue}>{item.count}</Text>
         <TouchableOpacity
+          style={styles.counterPlusCard}
           onPress={() => updateItemCount(item.id, item.count + 1)}>
           <Text style={styles.counterButton}>+</Text>
         </TouchableOpacity>
@@ -83,22 +85,33 @@ const CartScreen = () => {
   );
 
   const updateItemCount = (itemId, newCount) => {
-    const updatedCartItems = cartItems.map(item => {
-      if (item.id === itemId) {
-        return {...item, count: newCount};
-      }
-      return item;
-    });
-    setCartItems(updatedCartItems);
+    if (newCount <= 0) {
+      // If the new count is zero or negative, remove the item from cartItems
+      const updatedCartItems = cartItems.filter(item => item.id !== itemId);
+      setCartItems(updatedCartItems);
+    } else {
+      // Otherwise, update the count of the item
+      const updatedCartItems = cartItems.map(item => {
+        if (item.id === itemId) {
+          return {...item, count: newCount};
+        }
+        return item;
+      });
+      setCartItems(updatedCartItems);
+    }
   };
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={cartItems}
-        renderItem={renderCartItem}
-        keyExtractor={item => item.id.toString()}
-      />
+      {cartItems.length > 0 ? (
+        <FlatList
+          data={cartItems}
+          renderItem={renderCartItem}
+          keyExtractor={item => item.id.toString()}
+        />
+      ) : (
+        <Text style={styles.centeredText}>Cart is empty</Text>
+      )}
     </View>
   );
 };
@@ -165,6 +178,7 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 14,
     color: '#4952B0',
+    fontWeight: 'bold',
   },
   counterContainer: {
     flexDirection: 'column',
@@ -172,13 +186,48 @@ const styles = StyleSheet.create({
     width: 30,
     marginRight: 10,
   },
+  counterMinusCard: {
+    backgroundColor: '#ffffff',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    borderRadius: 15,
+    width: 30,
+    height: 30,
+    alignItems: 'center',
+  },
+  counterPlusCard: {
+    backgroundColor: '#A0DBF5',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    borderRadius: 15,
+    width: 30,
+    height: 30,
+    alignItems: 'center',
+  },
   counterButton: {
     fontSize: 20,
-    paddingHorizontal: 10,
     color: 'blue',
   },
   counterValue: {
     fontSize: 18,
+    margin: 5,
+  },
+  centeredText: {
+    marginTop: 50,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 
