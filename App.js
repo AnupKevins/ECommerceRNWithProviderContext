@@ -7,13 +7,16 @@ import {
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Provider} from './src/context/productContext';
+import {ThemeProvider} from './src/context/themeContext';
 import ProductScreen from './src/screens/productScreen';
 import ProfileScreen from './src/screens/profileScreen';
 import CartScreen from './src/screens/CartScreen';
 import ProductDetailScreen from './src/screens/productDetailScreen';
 import LikeScreen from './src/screens/LikeScreen';
+import ThemeScreen from './src/screens/ThemeScreen';
 import {ProductProvider} from './src/context/productContext';
 import {Image} from 'react-native';
+import {useTheme} from './src/context/themeContext';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -89,31 +92,46 @@ const DrawerNavigator = () => {
         })}
       />
       <Drawer.Screen name="Profile" component={ProfileScreen} />
+      <Drawer.Screen name="Theme" component={ThemeScreen} />
     </Drawer.Navigator>
   );
 };
 
 const App = () => {
   return (
-    <ProductProvider>
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen
-            name="HomeStack"
-            component={DrawerNavigator}
-            options={{headerShown: false}}
-          />
-          <Stack.Screen
-            name="Details"
-            component={ProductDetailScreen}
-            options={{
-              headerTitle: 'Products Details',
-              headerBackTitle: 'Products',
-            }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </ProductProvider>
+    <ThemeProvider>
+      <ProductProvider>
+        <NavigationContainer>
+          <AppStackContent />
+        </NavigationContainer>
+      </ProductProvider>
+    </ThemeProvider>
+  );
+};
+
+const AppStackContent = () => {
+  const {backgroundColor, textColor} = useTheme();
+
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: {backgroundColor},
+        headerTintColor: textColor,
+      }}>
+      <Stack.Screen
+        name="HomeStack"
+        component={DrawerNavigator}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Details"
+        component={ProductDetailScreen}
+        options={{
+          headerTitle: 'Products Details',
+          headerBackTitle: 'Products',
+        }}
+      />
+    </Stack.Navigator>
   );
 };
 
