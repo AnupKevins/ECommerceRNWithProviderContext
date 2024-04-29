@@ -31,24 +31,25 @@ export const ProductProvider = ({children}) => {
     );
   };
 
-  useEffect(() => {
-    const fetchProductData = async () => {
-      try {
-        const response = await fetch('https://fakestoreapi.com/products');
-        const data = await response.json();
-        setProductData(data);
-      } catch (error) {
-        console.error('Error fetching product data:', error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchProductData = async () => {
+  //     try {
+  //       const response = await fetch('https://fakestoreapi.com/products');
+  //       const data = await response.json();
+  //       setProductData(data);
+  //     } catch (error) {
+  //       console.error('Error fetching product data:', error);
+  //     }
+  //   };
 
-    fetchProductData();
-  }, []);
+  //   fetchProductData();
+  // }, []);
 
   return (
     <ProductContext.Provider
       value={{
         productData: productData,
+        setProductData: setProductData,
         wishListedProducts: wishListedProducts,
         addWishListedItem: addWishListedItem,
         removeWishListedItem: removeWishListedItem,

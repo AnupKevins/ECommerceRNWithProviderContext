@@ -9,6 +9,7 @@ import {
   Image,
   Dimensions,
   TextInput,
+  ActivityIndicator,
 } from 'react-native';
 
 import {ProductContext} from '../context/productContext';
@@ -26,7 +27,7 @@ const ProductScreen = ({navigation}) => {
   const [filteredProducts, setFilteredProducts] = useState([]);
 
   const [showSearchIcon, setShowSearchIcon] = useState(true); // State variable to show/hide search icon
-
+  const [loading, setLoading] = useState(true); // State variable to manage loading state
   const handlePress = item => {
     console.log('......24' + productContext.wishListedProducts);
     if (productContext.wishListedProducts.includes(item)) {
@@ -41,21 +42,31 @@ const ProductScreen = ({navigation}) => {
     }));
   };
 
-  // Filter products based on the search term
+  const fetchProductData = async () => {
+    try {
+      const response = await fetch('https://fakestoreapi.com/products');
+      const data = await response.json();
+      productContext.setProductData(data);
+      setLoading(false); // Set loading to false when data is fetched
+    } catch (error) {
+      console.error('Error fetching product data:', error);
+      setLoading(false); // Set loading to false in case of error
+    }
+  };
+
   useEffect(() => {
-    console.log('Product data:', productContext.productData);
+    fetchProductData();
+  }, []);
+
+  useEffect(() => {
     if (productContext.productData) {
       const filtered = productContext.productData.filter(product =>
         product.title.toLowerCase().includes(searchTerm.toLowerCase()),
       );
-      console.log('Filtered products:', filtered);
       setFilteredProducts(filtered);
     }
   }, [searchTerm, productContext.productData]);
 
-  // useEffect(() => {
-  //   getProducts();
-  // }, [getProducts]);
   return (
     <SafeAreaView>
       <View>
@@ -82,68 +93,62 @@ const ProductScreen = ({navigation}) => {
             value={searchTerm}
           />
         </View>
-        {filteredProducts.length > 0 ? (
+        {loading ? (
+          <ActivityIndicator size="large" color="#0000ff" /> // Show loader while loading
+        ) : filteredProducts.length > 0 ? (
           <FlatList
             numColumns={2}
             data={filteredProducts}
-            keyExtractor={products => products.id}
-            renderItem={({item, index}) => {
-              return (
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate('Details', {product: item})
-                  }>
-                  <View style={[styles.card, {width: cardWidth}]}>
-                    <View style={styles.percentageView}>
-                      <View style={styles.textContainer}>
-                        <Text style={styles.percentageText}>30%</Text>
-                      </View>
-                      <TouchableOpacity
-                        onPress={() => handlePress(item)}
-                        style={styles.heartButton}>
-                        <Image
-                          source={
-                            selectedItems[item.id]
-                              ? require('../assets/heartRed.png')
-                              : require('../assets/heartGrey.png')
-                          }
-                          style={styles.heartIcon}
-                        />
-                      </TouchableOpacity>
+            keyExtractor={product => product.id.toString()} // Use toString() for keyExtractor
+            renderItem={({item, index}) => (
+              <TouchableOpacity
+                onPress={() => navigation.navigate('Details', {product: item})}>
+                <View style={[styles.card, {width: cardWidth}]}>
+                  <View style={styles.percentageView}>
+                    <View style={styles.textContainer}>
+                      <Text style={styles.percentageText}>30%</Text>
                     </View>
-                    <View style={styles.imageContainer}>
+                    <TouchableOpacity
+                      onPress={() => handlePress(item)}
+                      style={styles.heartButton}>
                       <Image
                         source={
-                          productContext.arrBGImages[
-                            index % productContext.arrBGImages.length
-                          ]
+                          selectedItems[item.id]
+                            ? require('../assets/heartRed.png')
+                            : require('../assets/heartGrey.png')
                         }
-                        style={styles.imageBG}
+                        style={styles.heartIcon}
                       />
-                      <Image source={{uri: item.image}} style={styles.image} />
-                      {/* {item.image !== null ? (
-                      <CircleImage imagePath={item.image} />
-                    ) : null} */}
-                    </View>
-
-                    <Text numberOfLines={1} style={styles.title}>
-                      {item.title}
-                    </Text>
-                    <Text numberOfLines={1} style={styles.price}>
-                      $ {item.price}
-                    </Text>
-                    <View style={styles.ratingContainer}>
-                      {item.rating.rate !== undefined &&
-                      item.rating.rate !== null ? (
-                        <Rating value={item.rating.rate} />
-                      ) : (
-                        <Text>{item.rating.rate}/5</Text>
-                      )}
-                    </View>
+                    </TouchableOpacity>
                   </View>
-                </TouchableOpacity>
-              );
-            }}
+                  <View style={styles.imageContainer}>
+                    <Image
+                      source={
+                        productContext.arrBGImages[
+                          index % productContext.arrBGImages.length
+                        ]
+                      }
+                      style={styles.imageBG}
+                    />
+                    <Image source={{uri: item.image}} style={styles.image} />
+                  </View>
+                  <Text numberOfLines={1} style={styles.title}>
+                    {item.title}
+                  </Text>
+                  <Text numberOfLines={1} style={styles.price}>
+                    $ {item.price}
+                  </Text>
+                  <View style={styles.ratingContainer}>
+                    {item.rating.rate !== undefined &&
+                    item.rating.rate !== null ? (
+                      <Rating value={item.rating.rate} />
+                    ) : (
+                      <Text>{item.rating.rate}/5</Text>
+                    )}
+                  </View>
+                </View>
+              </TouchableOpacity>
+            )}
           />
         ) : (
           <Text style={styles.centeredText}>No products found.</Text>

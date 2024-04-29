@@ -1,19 +1,24 @@
 import React from 'react';
-
 import {createDrawerNavigator} from '@react-navigation/drawer';
-
-import {LikeStackNavigator} from './stackNavigator';
-import BottomTabNavigator from './tabNavigator';
+import {HomeTabs} from './TabNavigation';
+import ProfileScreen from '../screens/profileScreen';
+import ThemeScreen from '../screens/ThemeScreen';
+import {getHeaderTitle} from './HeaderTitle';
 
 const Drawer = createDrawerNavigator();
 
-const DrawerNavigator = () => {
+export const DrawerNavigator = () => {
   return (
-    <Drawer.Navigator>
-      <Drawer.Screen name="AllProduct" component={BottomTabNavigator} />
-      <Drawer.Screen name="Wish" component={LikeStackNavigator} />
+    <Drawer.Navigator initialRouteName="HomeDrawer">
+      <Drawer.Screen
+        name="HomeDrawer"
+        component={HomeTabs}
+        options={({route}) => ({
+          title: getHeaderTitle(route),
+        })}
+      />
+      <Drawer.Screen name="Profile" component={ProfileScreen} />
+      <Drawer.Screen name="Theme" component={ThemeScreen} />
     </Drawer.Navigator>
   );
 };
-
-export default DrawerNavigator;
